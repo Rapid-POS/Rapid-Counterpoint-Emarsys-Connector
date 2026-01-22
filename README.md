@@ -1,13 +1,11 @@
 # Rapid POS Emarsys Connector - Version 1.0
-Updated 1/16/2026
+Updated 1/21/2026
 
 ---
 
 ## Overview
 
-The Rapid Emarsys Connector automatically syncs customer and sales data from Counterpoint to Emarsys to support targeted email and SMS marketing. Emarsys specializes in regulated industries, including firearms. The connector syncs customer profiles and transaction information for customers with a populated **Email Address 1** in Counterpoint.
-
-If configured, **Phone 1** or **Mobile Phone 1** can be included to support Emarsys SMS marketing.
+The Rapid Emarsys Connector automatically syncs customer and sales data from Counterpoint to Emarsys to support targeted email marketing. The connector syncs customer profiles and transaction information for customers with a populated **Email Address 1** in Counterpoint. Prior to considering this connector, please reach out to SAP Emarsys for a product quote.
 
 ---
 
@@ -18,7 +16,7 @@ If configured, **Phone 1** or **Mobile Phone 1** can be included to support Emar
 - Minimum Windows Server version: **2016**  
 - Minimum PowerShell version: **5.1**  
 
-If you would like the Emarsys connector but your system does not meet these minimum requirements, please consult your Care Team Lead (vCIO) for an upgrade quote.
+If you would like the SAP Emarsys connector but your system does not meet these minimum requirements, please consult your Care Team Lead (vCIO) for an upgrade quote.
 
 ---
 
@@ -45,17 +43,11 @@ If you would like the Emarsys connector but your system does not meet these mini
 
 ## SECTION 1: Emarsys Customer Records
 
-The Emarsys Connector adds a **Emarsys Customers** button within Counterpoint, providing access to Emarsys-specific customer fields directly from the Counterpoint customer record.
+The Emarsys Connector adds an **Emarsys Customers** button within Counterpoint, providing access to Emarsys-specific customer fields directly from the Counterpoint customer record.
 
-![Customer Record - Emarsys Customers Button](./images/counterpoint-customer-record-Emarsys-customers-button.png)
+![Customer Record - Emarsys Customers Button](./images/counterpoint-customer-record-emarsys-customers-button.png)
 
 The email address on the Emarsys customer record is populated from **Email Address 1** on the Counterpoint customer record.
-
-Depending on configuration, the SMS phone number is populated from either **Phone 1** or **Mobile Phone 1** on the Counterpoint customer record, **only when it meets the following criteria**:
-- Contains **exactly 10 numeric digits**
-- Does **not** include letters 
-
-If the configured phone number field contains more than or fewer than 10 digits, or if it includes letters, the SMS number will **not** be pushed to Emarsys.
 
 ![Emarsys Customer Record](./images/counterpoint-Emarsys-customer-record.png)
 
@@ -77,14 +69,7 @@ Each Emarsys customer record includes a sync status value indicating its current
 - **1** – Recently created or updated; will sync on the next connector run  
 - **2** – Profile is currently in the active sync queue  
 - **5** – Invalid email address  
-- **6** – Invalid SMS number  
 - **9** – Sync error; requires remediation before it can be re-synced  
-
-### Add-on-the-Fly Emarsys Customer Form (Optional)
-
-An optional **Emarsys Customers Add-on-the-Fly** form can be configured to give cashiers limited access to Emarsys customer records, if desired.
-
-Please contact Rapid for a quote if you are interested in a customized add-on-the-fly form for your company.
 
 ---
 
@@ -104,143 +89,41 @@ For clients who use **multiple Emarsys accounts**, a separate configuration reco
 - Used to temporarily disable the connector while troubleshooting or testing.
 
 ### Workgroup ID
-- Workgroup **231** will be created and used when inserting new customer records from Emarsys into Counterpoint.
-- The associated Customer Template for this workgroup is applied during customer creation.
+- Workgroup **233** will be created when the connector is installed. This is not currently used, but rather is related to functionality that may be developed in the future. See "Import New Contact?" below.
 
 ### Auto Create Emarsys Profile
-Controls when Emarsys customer records are automatically created from Counterpoint.
+Controls whether or not Emarsys customer records are automatically created from Counterpoint.
 
-- **EMAIL ONLY**  
-  A Emarsys customer record is automatically created when a customer is added to Counterpoint with **Email Address 1**.  
-  - If the configured phone number (**Mobile Phone 1** or **Phone 1**) is also present, it will be included on the Emarsys profile.
-  - SMS subscription configuration is handled separately.
+- **Yes/Checked**  
+  A Emarsys customer record is automatically created when a customer is added to Counterpoint with **Email Address 1**.
+  - Customers pushed up to Emarsys are sent as "opt-in". 
 
 - **NO**  
   Emarsys customer records must be created manually.
 
-- **BOTH**  
-  A Emarsys customer record is automatically created only when both **Email Address 1** *and* the configured phone number (**Mobile Phone 1** or **Phone 1**) are present.
+### Filter Customers Up
+If this filter is populated, then only the customers that meet the requirements of the defind filter will be pushed up to Emarsys.
 
-- **Note:**  
-  **SMS ONLY** is currently a placeholder for potential future development. At this time, **all customers must have an email address** to be synced to Emarsys.
-
-### Always Send Email Receipt Default
-The **Send Email Receipt** flag on the Counterpoint customer record does not have standalone functionality within Counterpoint. Instead, it is sent to Emarsys and can be used to control Emarsys flows related to receipt delivery.
-
-- **Checked**  
-  Automatically flags **Send Email Receipt** on the Emarsys customer record.  
-  This establishes a default behavior indicating that receipts should be emailed for that customer. Individual customer records can still be adjusted manually.
-
-- **Unchecked**  
-  The **Send Email Receipt** flag must be set manually on each customer record.
-
-#### Using a Ticket-Level Receipt Indicator (Advanced Option)
-Some clients choose to control receipt delivery at the **ticket level** rather than at the customer level by using a custom ticket header field, commonly named:
-
-`USER_RCPT_DELIV_METHD`
-
-This field is typically populated with a value indicating how the receipt should be delivered for that **specific ticket**, such as:
-- **E** – Email receipt
-- **P** – Print receipt
-
-When this ticket-level indicator is used:
-- Receipt delivery is determined **per ticket**, independent of the customer’s **Send Email Receipt** setting.
-- The **Always Send Email Receipt Default** configuration can be ignored as it applies only to the customer record default.
-- Emarsys flows can be built to evaluate this ticket-level value to decide whether a receipt email should be sent.
-
-### Counterpoint Email & SMS Lists
-These lists are used to manage subscriptions and control which customer profiles receive **email and SMS communications** originating from Counterpoint data.
-
-During initial setup:
-- If no existing lists are specified, the connector will automatically create a **Counterpoint Email List**  and a **Counterpoint SMS List** in Emarsys.
-
-For clients who already use Emarsys, the connector can be configured to use one or more **existing Emarsys lists** instead of creating new ones. This is common when companies want Counterpoint data to flow into an established marketing list.
-
-- Emarsys **List IDs** are configured in this section.
-- List IDs can be located in Emarsys under **List Settings > List Details**.
-
-![Emarsys List ID](./images/Emarsys-list-settings-list-details-list-id.png)
-
-### Auto Opt-In by Default
-Optional automation designed to reduce manual steps during customer creation.
-
-- **Checked**  
-  The opt-in box is automatically flagged when creating a new Emarsys customer record.
-
-- **Unchecked**  
-  The opt-in box must be manually selected.
-
-### Opt-In Definition
-Currently, the only supported opt-in definition is **Subscribed**.
-
-Behavior depends on Emarsys list settings:
-- **Single opt-in lists** typically accept the subscription.
-- **Double opt-in lists** often set the subscription to *Never Subscribed* until the customer confirms via email or SMS.
-- Emarsys may reject subscription requests for suppressed profiles, previously unsubscribed contacts, or invalid email addresses.  
-  Rapid can send the request, but cannot control Emarsys’s response.
-
-### Opt-Out Definition
-Defines how opt-outs are sent to Emarsys:
-
-- **Unsubscribed**  
-  Opt-outs are pushed to Emarsys as unsubscribed from the list.
-
-- **Suppressed**  
-  Opt-outs are pushed as suppressed profiles.  
-  This typically affects email lists only and does not appear to impact SMS lists.
-
-### Phone # for Emarsys
-Defines which Counterpoint Customer Record phone number field is used to populate the Emarsys **SMS Number – Mobile Phone** profile property.
-- Supported options:
-  - **Mobile Phone 1**
-  - **Phone 1**
-- If the selected phone field does not meet the _exactly 10 numeric digits_ requirement, the phone number will not be sent to Emarsys
-- This setting controls **which phone number is populated**, not SMS subscription consent.
-
-### SMS Country Code
-- Emarsys requires all SMS phone numbers to include a country code.
-- Examples:
-  - **+1** (United States and Canada)
-  - **+52** (Mexico)
-
-### Insert New Customer Records
-Controls whether Emarsys profiles can create new Counterpoint customer records.
-
-- **Checked**  
-  Emarsys profiles that do not match an existing Counterpoint customer will be inserted into Counterpoint.
-  - Customer records are created using fields configured in **Emarsys Field Mapping – Customers Down** with an **Insert** action.
-  - Commonly used when customer data originates from website sign-up forms.
-  - Matching logic:
-    1. Emarsys Profile ID
-    2. Email Address 1
-  - If no match is found in either Counterpoint (`AR_CUST`) or Emarsys customer records (`USER_Emarsys_CUST`), a new Counterpoint customer record is created.
-  - All profiles changed since the last sync are evaluated, regardless of Emarsys list membership.
-
-- **Unchecked**  
-  New Counterpoint customer records will not be created by the connector.
-
-**Important Notes:**
-- Updating existing Counterpoint customer records is **independent** of this setting. Refer to **SECTION 3: Emarsys Field Mapping – Customers Down**.
-- Importing customers can result in **duplicate records** if email addresses were not previously captured in Counterpoint.
-- Duplicates can be merged manually, but this can be especially problematic for clients using **DL Scan** or **3310 forms**.
-- Consult with your **Business Analyst**, **vCIO**, or **Project Manager** before enabling this feature.
-
-### Ticket History Start and End Dates
-- Enables syncing of previously posted (historical) tickets to Emarsys.
-- Intended for **one-time use only**.
-
-**Important:**
-- Do **not** enable this yourself. Consult with your Business Analyst.
-- Running history syncs multiple times with overlapping dates will result in **duplicate data** in Emarsys.
-- If either date is left blank, historical tickets will not sync.
-- After the specified date range is processed, the configuration automatically resets to null.
+### Import New Contact?
+PLACEHOLDER FOR FUTURE DEVELOPMENT. Currently the connector **cannot** create (insert) new Counterpoint customer records. It also cannot update existing customer records in Counterpoint.
+- _When developed_, this field will control whether Emarsys contacts can create new Counterpoint customer records.
+  - If set to yes/checked, Emarsys contacts that do not match an existing Counterpoint customer will be inserted into Counterpoint.
+  - If set to no/unchecked, new Counterpoint customer records will not be created by the connector.
 
 ### Other Configuration Options
 Additional configuration fields exist for internal use by Rapid programmers. These options are used to optimize performance or assist with troubleshooting and should not be modified by end users.
 
 ---
 
-## SECTION 3: Emarsys Field Mapping – Customers Up
+## SECTION 3: Emarsys Account Store Mapping
+
+The Emarsys Connector includes functionality for pushing transactional data (documents) up to Emarsys. Only transactions from the stores configured in this mapping table will be pushed to Emarsys.
+- Only customers with Emarsys Customer Records will have their transactions pushed to Emarsys.
+- If a customer with a valid Emarsys Customer Record makes a purchase at a non-configured store, that particular transaction will not be pushed to Emarsys.
+
+---
+
+## SECTION 4: Emarsys Field Mapping – Customers Up
 
 The **Emarsys Field Mapping – Customers Up** screen provides a user interface for managing which customer fields are sent from Counterpoint up to Emarsys.
 
@@ -258,199 +141,60 @@ Calculated fields are not included by default. Any request to add calculated fie
 
 The following customer fields are included in a standard Emarsys connector deployment:
 
-1. Email Address 1  
-2. Mobile Phone 1
+1. Email Address 1 (Emarsys Field 3)
 3. Customer Number
-4. First Name  
-5. Last Name  
-6. Address 1  
-7. Address 2  
-8. City  
-9. State  
-10. Zip Code  
-11. Country  
-12. A/R Balance  
-13. Customer Category  
-14. First Sale Date  
-15. Last Sale Date  
-16. Loyalty Point Balance  
-17. Send Email Receipts (Yes/No)
+4. First Name (Emarsys Field 1)
+5. Last Name (Emarsys Field 2)
+6. Opt-in (Emarsys Field 31, default to 1, meaning yes)
+7. Source (Emarsys Field 8874, defaults to Rapid)
+8. Store ID (Emarsys Field 13887)
+
+Additional fields can be mapped by request.
 
 ---
 
-## SECTION 4: Emarsys Field Mapping – Customers Down
+## SECTION 5: Emarsys Field Mapping – Document Headers Up
 
-The **Emarsys Field Mapping – Customers Down** table provides a user interface for managing which customer fields are imported from Emarsys down into Counterpoint.
+The **Emarsys Field Mapping – Document Headers Up** screen provides a user interface for managing which document header fields are sent from Counterpoint up to Emarsys.
 
-For clients using web-based sign-up forms or other Emarsys integrations, this functionality allows customer data entered in Emarsys to be imported into Counterpoint. This may include:
-- Updating (overwriting) existing customer fields in Counterpoint
-- Inserting new Counterpoint customer records when no matching record exists
+This table defines how document header data in Counterpoint maps to Emarsys event fields. The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
 Note: This is best viewed in _table view_.
 
-![Emarsys Field Mapping Customers Down in Table View](./images/counterpoint-Emarsys-field-mapping-customers-down-table-view.png)
-
-### Default Behavior
-
-In a standard deployment, **no fields are imported** from Emarsys. All fields in the table are set to **No Action** by default.
-
-Any change to this behavior must be requested by the client, and a programmer will configure the table accordingly.
-
-### Action Types
-
-Each field in the **Customers Down** mapping table is assigned an action type that controls how Emarsys data is applied in Counterpoint:
-
-- **Insert Only**  
-  The field is set by Emarsys in Counterpoint **only when a new Counterpoint customer record is created**.
-
-- **Update Existing**  
-  When the field value changes in Emarsys, the corresponding field in Counterpoint is updated.  
-  This action does **not** set the field during new customer creation.
-
-- **Insert and Update**  
-  The field is set by Emarsys when a new Counterpoint customer record is created, and it is also updated in Counterpoint when the value changes in Emarsys.
-
-- **No Action**  
-  The field is not set or updated by Emarsys in Counterpoint.
-
-**Note:**  
-- The two action types that include **Insert** only function when the configuration option **Insert New Customer Records** is enabled.  
-- The two action types that include **Update** will function regardless of that configuration setting.
-
-Use caution when selecting which Emarsys fields are allowed to overwrite Counterpoint data. Consult with your **Business Analyst (BA)** for guidance before enabling field updates.
-
-### Retain Counterpoint Value if Emarsys is Empty
-
-This setting controls how blank values from Emarsys are handled during import:
-
-- **Checked**  
-  Counterpoint will **not** be updated with blank values from Emarsys.  
-  This prevents scenarios where a customer leaves a field blank on a web-based sign-up form, unintentionally overwriting existing Counterpoint data.
-
-- **Unchecked**  
-  Allows existing Counterpoint values to be overwritten with blank values from Emarsys.  
-  This setting is **not recommended**.
+![Emarsys Field Mapping Document Headers Up in Table View](./images/counterpoint-Emarsys-field-mapping-document-headers-up-table-view.png)
 
 ---
 
-## SECTION 5: Emarsys Custom Properties – Documents Up
+## SECTION 6: Emarsys Field Mapping – Document Lines Up
 
-Documents including **tickets**, **orders**, and **layaways** are automatically sent from Counterpoint to Emarsys. These documents appear in Emarsys as **metrics**.
+The **Emarsys Field Mapping – Document Lines Up** screen provides a user interface for managing which document line fields are sent from Counterpoint up to Emarsys.
 
-This data is sent to Emarsys for availability and flexibility, it does not need to be actively used. Once present, the metrics can be leveraged to build **flows**, **segments**, or **reporting**, if desired.
+This table defines how document line data in Counterpoint maps to Emarsys event fields. The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
-Most fields used to populate Emarsys document metrics are **hard-coded** in the connector. However, additional configurable fields are available through the **Emarsys Custom Properties – Documents Up** table.
+Note: This is best viewed in _table view_.
 
-Due to Emarsys API rate limits, **up to eight** custom properties can be selected in this table.
-
-![Emarsys Custom Properties Documents Up](./images/counterpoint-Emarsys-custom-properties-documents-up.png)
-
-For more information on how documents are represented in Emarsys, including the relationship between **metrics** and **dimensions**, refer to [Metrics and Transactional Email Guide](./METRICS-AND-TRANSACTIONAL-EMAIL-GUIDE.md).
+![Emarsys Field Mapping Document Lines Up in Table View](./images/counterpoint-Emarsys-field-mapping-document-lines-up-table-view.png)
 
 ---
 
-## SECTION 6: Emarsys Custom Events
+## SECTION 7: Emarsys Field Mapping – Document Payments Up
 
-Emarsys does not allow flows to be scheduled based on a specific date field. The connector's **custom events** functionality can be used as a workaround to support date-driven automations.
+The **Emarsys Field Mapping – Document Payments Up** screen provides a user interface for managing which document payment fields are sent from Counterpoint up to Emarsys.
 
-The **Emarsys Custom Events** table allows specific Counterpoint conditions to trigger custom event metrics that are sent to Emarsys on a calculated date. These events can then be used to trigger Emarsys flows.
+This table defines how document line payment in Counterpoint maps to Emarsys event fields. The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
-This table is configured only by a programmer. Please contact Rapid for a quote if you are interested in sending custom events to Emarsys.
+Note: This is best viewed in _table view_.
 
-### Example: Delivery Arriving Today Reminder
+![Emarsys Field Mapping Document Payments Up in Table View](./images/counterpoint-Emarsys-field-mapping-document-payments-up-table-view.png)
 
-A ticket profile date stored in Counterpoint can be used to identify a scheduled delivery date. A custom event configured in the connector can push that ticket to Emarsys **on the delivery date**.
-
-Once received in Emarsys, a flow can be triggered to send a delivery reminder email or SMS message to the customer.
-
-For details about the **standard event metrics** that are automatically synced to Emarsys, refer to [Metrics and Transactional Email Guide](./METRICS-AND-TRANSACTIONAL-EMAIL-GUIDE.md).
-
-![Emarsys Custom Events](./images/counterpoint-Emarsys-custom-events.png)
-
----
-
-## SECTION 7: Emarsys Profile Custom Properties
-
-In some cases, it is useful to populate **custom profile properties** in Emarsys — especially properties that are **calculated from historical ticket data** stored in Counterpoint. The **Emarsys Profile Custom Properties** tool provides a flexible way to generate and sync these calculated values.
-
-This feature allows users to define a custom profile property (as it will appear in Emarsys) and specify how that value should be calculated. Calculations are typically based on ticket history data and can include aggregate functions such as totals, maximums, or averages over a defined date range.
-
-### Example Use Case
-
-For example, a user may want to sync the **total ticket subtotal for the first quarter of 2025** for customers who already have Emarsys profiles. This could be configured as follows:
-
-- **Property Name**: `TicketSubtotalQ1of2025`  
-- **Table Name**: `PS_TKT_HIST`  
-- **Column Name**: `SUB_TOT`  
-- **Aggregate Function**: `SUM`  
-- **Begin Date**: `01/01/2025`  
-- **End Date**: `03/31/2025`
-
-![Emarsys Profile Custom Properties](./images/Emarsys-profile-custom-properties.png)
-
-### How the Calculation Works
-
-When a custom profile property is enabled:
-
-- A **custom database view** is created to perform the calculation.
-- Each view returns:
-  - The **customer number**
-  - The **calculated value** for the custom property
-- The view is automatically added to **Emarsys Field Mapping – Customers Up**.
-- All customers included in the result set have their **Emarsys Sync Status** set to `1`, triggering a resync to Emarsys with the new property.
-
-**Important notes:**
-- If a customer does **not** have a calculated value, the custom property is **not sent** and will **not appear** on the Emarsys profile.
-- If a client has **multiple Emarsys accounts**, the calculation is automatically performed for **all accounts**.
-
-### Editing Existing Custom Properties
-
-After the initial sync, the parameters of a custom property can be edited. Doing so will trigger another resync; however:
-
-- Only customers included in the **new result set** will be recalculated.
-- Customers outside the result set are **left unchanged**.
-
-In general, it is recommended to create a new custom property rather than editing an existing one, especially when historical values need to be preserved.
-
-### Profile Custom Property Definitions
-
-The **Emarsys Profile Custom Properties** tool includes a guided workflow with the following constraints:
-
-#### Property Name
-- Must be **unique** (acts as a primary key)
-- Must **not contain spaces**
-- Becomes the **permanent label** for the profile property in Emarsys and **cannot be changed**
-
-#### Data Sources
-- Limited to:
-  - `PS_TKT_HIST`
-  - `PS_TKT_HIST_LIN`
-
-#### Fields
-- Restricted to **numeric fields only**
-
-#### Aggregate Functions
-- Supported values:
-  - `SUM`
-  - `MAX`
-  - `MIN`
-  - `AVG`
-  - `COUNT`
-
-#### Date Range
-- A **begin date** and **end date** are required
-
-#### Enabled
-- When **enabled**, the custom profile property calculation becomes active.
-- The connector begins evaluating customers against the defined criteria.
-- Customers included in the result set have their **Emarsys Sync Status** set to `1`, triggering a resync to Emarsys with the calculated custom property.
-- Disabling the property stops further calculations and syncs but does **not** remove the property from existing Emarsys profiles.
 
 ---
 
 ## SECTION 8: Queued to Be Sent to Emarsys
 
-When sending metric data to Emarsys, each document — including **tickets**, **orders**, **layaways** — is first placed into a queue in Counterpoint. Documents are then synced from this queue to Emarsys during connector runs.
+When sending transactional (document) data to Emarsys, each ticket is first placed into a queue in Counterpoint. Tickets are then synced from this queue to Emarsys during connector runs.
+
+**Note:** Tickets are one type of document within Counterpoint. Currently this is the only document type pushed to Emarsys. (For example, orders and layaways are not sent to Emarsys.)
 
 ![Queued to be Sent to Emarsys](./images/counterpoint-Emarsys-queued-to-be-sent-to-Emarsys.png)
 
@@ -486,34 +230,7 @@ For details on the meaning of each customer sync status value, refer back to **S
 
 ---
 
-## SECTION 10: Run Emarsys Connector Button
-
-The **Run Emarsys Connector** menu option allows authorized users to manually trigger the Emarsys Connector when needed. Manual execution is typically used for testing or troubleshooting and is not required during normal operation.
-
-### How Manual Execution Works
-
-When the **Run Emarsys Connector** menu option is selected:
-
-- A **Manual Run Connector** action flag is set in the Emarsys configuration.
-- The flag functions as a **one-time execution request** and remains enabled until it is processed by the connector.
-- Execution is handled in the background on the server (not on the workstation) to prevent overlapping executions.
-
-### Background Processing and Scheduling
-
-A background process periodically checks for the **Manual Run Connector** action flag based on a configurable **CRON schedule** stored in the Emarsys configuration.
-
-- The **Manual Run Connector Execution Time** schedule can be configured from the **Emarsys Configuration** screen.
-- When the action flag is detected:
-  - If the Emarsys connector is **not currently running**, it will execute for **all configured Emarsys accounts**, typically within one minute.
-  - If the connector **is already running**, the system waits for the current execution to complete, then automatically restarts the connector for all configured Emarsys accounts.
-
-In both scenarios, the action flag is **automatically cleared** when execution begins.
-
-**Important:** Manual execution is intended primarily for **programmer-led testing or troubleshooting**, often when the connector has been **temporarily disabled**. It is not designed for routine operational use, as the connector runs automatically according to its configured schedule.
-
----
-
-## SECTION 11: Mark All Emarsys Messages as Read
+## SECTION 10: Mark All Emarsys Messages as Read
 
 The **Mark All Emarsys Messages as Read** menu option allows users to suppress repeated pop-up alerts in Counterpoint while retaining all Emarsys connector messages for later review.
 
@@ -525,7 +242,7 @@ Marking messages as read stops the pop-up notifications but does **not** delete 
 
 ---
 
-## SECTION 12: Emarsys Connector Execution and Sync Timing
+## SECTION 11: Emarsys Connector Execution and Sync Timing
 
 The Emarsys Connector operates as a **Windows Service**, automatically syncing customer profiles and transactional documents between Counterpoint and Emarsys.
 
@@ -548,7 +265,7 @@ For details on how customer profile changes are evaluated and synchronized betwe
 
 ---
 
-## SECTION 13: Customer Profile Sync Logic and Workflow
+## SECTION 12: Customer Profile Sync Logic and Workflow
 
 This section describes the logical order and decision-making process used by the connector after a sync cycle begins.
 
@@ -574,7 +291,7 @@ These updates are then pushed up to Emarsys, ensuring that Emarsys profiles refl
 
 ---
 
-## SECTION 14: Managing Customer Email and Phone Updates
+## SECTION 13: Managing Customer Email and Phone Updates
 
 When a customer is synced to Emarsys, the connector stores the associated **Emarsys Profile ID** on the customer record in Counterpoint. This Profile ID becomes the permanent link between the Counterpoint customer and the Emarsys profile and is used for all future updates.  
 
@@ -629,10 +346,6 @@ It is recommended to **manually delete** the detached Emarsys customer record af
 
 ## Conclusion
 
-The Rapid Emarsys Connector streamlines the exchange of customer profiles and transactional data between Counterpoint and Emarsys, enabling powerful email and SMS marketing, accurate segmentation, and automated flows.
+The Rapid Emarsys Connector streamlines the exchange of customer profiles and transactional data between Counterpoint and Emarsys, enabling powerful email marketing.
 
-Before go-live, review configuration settings, field mappings, and list configurations to ensure customer data and subscription preferences are handled correctly. After deployment, monitor customer and document sync status views to identify invalid data or records requiring remediation.
-
-For assistance with configuration changes, custom field mapping, event setup, or troubleshooting, contact Rapid Support.  
-
-  
+For assistance with configuration changes, custom field mapping, or troubleshooting, contact Rapid Support.  
