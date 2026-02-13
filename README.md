@@ -1,11 +1,11 @@
 # Rapid POS Emarsys Connector - Version 1.1
-Updated 1/21/2026
+Updated 2/12/2026
 
 ---
 
 ## Overview
 
-The Rapid Emarsys Connector automatically syncs customer and sales data from Counterpoint to Emarsys to support targeted email marketing. The connector syncs customer profiles and transaction information for customers with a populated **Email Address 1** in Counterpoint. 
+The Rapid Emarsys Connector automatically syncs customer and sales data from Counterpoint to Emarsys to support targeted email marketing. The connector syncs customer profiles and transaction information for customers with a populated **Email Address 1** in Counterpoint directly to Emarsys. Sales data is synced to a custom endpoint. 
   
 Prior to considering this connector, please reach out to SAP Emarsys for a product quote.
 
