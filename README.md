@@ -1,5 +1,5 @@
 # Rapid POS Emarsys Connector - Version 1.1
-Updated 2/12/2026
+Updated 2/13/2026
 
 ---
 
