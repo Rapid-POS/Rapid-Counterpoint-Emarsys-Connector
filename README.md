@@ -27,12 +27,11 @@ If you would like the SAP Emarsys connector but your system does not meet these 
 - [Minimum System Requirements](#minimum-system-requirements)
 - [SECTION 1: Emarsys Customer Records](#section-1-emarsys-customer-records)
 - [SECTION 2: Emarsys Configuration](#section-2-emarsys-configuration)
-- [SECTION 3: Emarsys Account Store Mapping](#section-3-emarsys-account-store-mapping)
-- [SECTION 4: Emarsys Field Mapping – Customers Up](#section-4-emarsys-field-mapping--customers-up)
-- [SECTION 5: Emarsys Field Mapping – Document Headers Up](#section-5-emarsys-field-mapping--document-headers-up)
-- [SECTION 6: Emarsys Field Mapping – Document Lines Up](#section-6-emarsys-field-mapping--document-lines-up)
-- [SECTION 7: Emarsys Field Mapping – Document Payments Up](#section-7-emarsys-field-mapping--document-payments-up)
-- [SECTION 8: Queued to Be Sent to Emarsys](#section-8-queued-to-be-sent-to-emarsys)
+- [SECTION 3: Emarsys Field Mapping Customers Up](#section-3-emarsys-field-mapping--customers-up)
+- [SECTION 4: Emarsys Field Mapping Document Headers Up](#section-5-emarsys-field-mapping-document-headers-up)
+- [SECTION 5: Emarsys Field Mapping Document Lines Up](#section-6-emarsys-field-mapping-document-lines-up)
+- [SECTION 6: Emarsys Field Mapping Document Payments Up](#section-7-emarsys-field-mapping-document-payments-up)
+- [SECTION 7: Queued to Be Sent to Emarsys](#section-8-queued-to-be-sent-to-emarsys)
 - [SECTION 9: Emarsys Customer Status View](#section-9-emarsys-customer-status-view)
 - [SECTION 10: Mark All Emarsys Messages as Read](#section-10-mark-all-emarsys-messages-as-read)
 - [SECTION 11: Emarsys Connector Execution and Sync Timing](#section-11-emarsys-connector-execution-and-sync-timing)
@@ -44,13 +43,19 @@ If you would like the SAP Emarsys connector but your system does not meet these 
 
 ## SECTION 1: Emarsys Customer Records
 
-The Emarsys Connector adds an **Emarsys Customers** button within Counterpoint, providing access to Emarsys-specific customer fields directly from the Counterpoint customer record.
+In order for a Counterpoint customer to sync to Emarsys, an associated **Emarsys Customer Record** must exist in Counterpoint.
 
-![Customer Record - Emarsys Customers Button](./images/counterpoint-customer-record-emarsys-customers-button.png)
+Depending on configuration settings (see **SECTION 2: Emarsys Configuration**), these records are typically created automatically for customers who have a populated **Email Address 1** in Counterpoint. If automatic profile creation is disabled, Emarsys Customer Records must be created manually.
 
-The email address on the Emarsys customer record is populated from **Email Address 1** on the Counterpoint customer record.
+The Emarsys Customer Record serves as the connector’s control record and contains:
 
-![Emarsys Customer Record](./images/counterpoint-Emarsys-customer-record.png)
+- The email address (sourced from **Email Address 1** in Counterpoint)
+- The Emarsys **Contact ID** (returned from Emarsys after a successful profile sync)
+- The current sync status
+
+After a customer profile is successfully created or matched in Emarsys, the Emarsys **Contact ID** is written back to Counterpoint.
+
+![Emarsys Customer Record](./images/counterpoint-emarsys-customer-record.png)
 
 ### Accessing Emarsys Customer Records
 
@@ -60,7 +65,7 @@ All Emarsys customer records can also be accessed from:
 
 This view allows records to be displayed in **table view**, where filters can be applied to review customers based on their current sync status.
 
-![Emarsys Customers in Table View](./images/counterpoint-Emarsys-customers-table-view.png)
+![Emarsys Customers in Table View](./images/counterpoint-emarsys-customers-table-view.png)
 
 ### Emarsys Sync Status Codes
 
@@ -78,7 +83,7 @@ Each Emarsys customer record includes a sync status value indicating its current
 
 The Emarsys Connector includes a user interface for managing configuration options that control how the connector interacts with Emarsys and Counterpoint.  
 
-![Emarsys Configuration](./images/counterpoint-Emarsys-configuration.png)
+![Emarsys Configuration](./images/counterpoint-emarsys-configuration.png)
 
 For clients who use **multiple Emarsys accounts**, a separate configuration record will exist for each account.
 
@@ -89,8 +94,29 @@ For clients who use **multiple Emarsys accounts**, a separate configuration reco
 ### Is Enabled?
 - Used to temporarily disable the connector while troubleshooting or testing.
 
+### Credentials
+Stores the authentication values required for the Emarsys connector.
+
+- **Contact Sync Credentials** – API key and username used for customer profile (contact) synchronization.
+- **Event Sync API Key** – API key used for transactional event (document/ticket) synchronization.
+
+### Endpoints
+Defines the service URLs used by the connector. Contacts and events are processed by separate Emarsys services and therefore require distinct endpoints.
+
+- **Contact Endpoint** – Used for customer profile (contact) synchronization.
+- **Event Endpoint** – Used for transactional event (document/ticket) synchronization.
+
+### Connector Version
+- Displays the currently installed version of the Emarsys Connector.  
+
 ### Workgroup ID
 - Workgroup **233** will be created when the connector is installed. This is not currently used, but rather is related to functionality that may be developed in the future. See "Import New Contact?" below.
+
+### Last Maintained By, Last Maintained
+- Displays most recent maintenance information for reference.
+
+### Last Customer Sync Date (UTC)
+- Displays the most recent date a customer record was successfully synced to Emarsys.
 
 ### Auto Create Emarsys Profile
 Controls whether or not Emarsys customer records are automatically created from Counterpoint.
@@ -111,28 +137,36 @@ PLACEHOLDER FOR FUTURE DEVELOPMENT. Currently the connector **cannot** create (i
   - If set to yes/checked, Emarsys contacts that do not match an existing Counterpoint customer will be inserted into Counterpoint.
   - If set to no/unchecked, new Counterpoint customer records will not be created by the connector.
 
+### Max Customers to Sync
+- Used to optimize connector performance.
+- Defines the maximum number of customers that can be synced in a single connector run.
+
+### Send Documents Up
+- If set to yes/checked, documents (tickets) will be sent to the defined endpoint at ticket completion.
+  - Note: The stored procedure that controls this functionality will automatically exclude sending tickets from stores with a Canadian address.
+- If set to no/unchecked, no documents will be sent.
+
+### External Event ID
+- Required by the events endpoint. 
+
+### Max Number of Queue to Sync
+- Used to optimize connector performance.
+- Defines the maximum number of documents (tickets) that can be synced in a single connector run.
+
 ### Other Configuration Options
 Additional configuration fields exist for internal use by Rapid programmers. These options are used to optimize performance or assist with troubleshooting and should not be modified by end users.
 
 ---
 
-## SECTION 3: Emarsys Account Store Mapping
+## SECTION 3: Emarsys Field Mapping Customers Up
 
-The Emarsys Connector includes functionality for pushing transactional data (documents) up to Emarsys. Only transactions from the stores configured in this mapping table will be pushed to Emarsys.
-- Only customers with Emarsys Customer Records will have their transactions pushed to Emarsys.
-- If a customer with a valid Emarsys Customer Record makes a purchase at a non-configured store, that particular transaction will not be pushed to Emarsys.
-
----
-
-## SECTION 4: Emarsys Field Mapping – Customers Up
-
-The **Emarsys Field Mapping – Customers Up** screen provides a user interface for managing which customer fields are sent from Counterpoint up to Emarsys.
+The **Emarsys Field Mapping Customers Up** screen provides a user interface for managing which customer fields are sent from Counterpoint up to Emarsys.
 
 This table defines how customer profile data in Counterpoint maps to Emarsys profile properties. The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
 Note: This is best viewed in _table view_.
 
-![Emarsys Field Mapping Customers Up in Table View](./images/counterpoint-Emarsys-field-mapping-customers-up-table-view.png)
+![Emarsys Field Mapping Customers Up in Table View](./images/counterpoint-emarsys-field-mapping-customers-up-table-view.png)
 
 Calculated fields are not included by default. Any request to add calculated fields must be reviewed and quoted separately by Rapid.
 
@@ -143,61 +177,59 @@ Calculated fields are not included by default. Any request to add calculated fie
 The following customer fields are included in a standard Emarsys connector deployment:
 
 1. Email Address 1 (Emarsys Field 3)
-3. Customer Number
 4. First Name (Emarsys Field 1)
 5. Last Name (Emarsys Field 2)
-6. Opt-in (Emarsys Field 31, default to 1, meaning yes)
-7. Source (Emarsys Field 8874, defaults to Rapid)
+6. Opt-in (Emarsys Field 31, default to `1`, meaning yes)
+7. Source (Emarsys Field 8874, defaults to `Rapid`)
 8. Store ID (Emarsys Field 13887)
 
 Additional fields can be mapped by request.
 
 ---
 
-## SECTION 5: Emarsys Field Mapping – Document Headers Up
+## SECTION 4: Emarsys Field Mapping Document Headers Up
 
-The **Emarsys Field Mapping – Document Headers Up** screen provides a user interface for managing which document header fields are sent from Counterpoint up to Emarsys.
+The **Emarsys Field Mapping Document Headers Up** screen provides a user interface for managing which document header fields are sent from Counterpoint up to Emarsys.
 
 This table defines how document header data in Counterpoint maps to Emarsys event fields. The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
 Note: This is best viewed in _table view_.
 
-![Emarsys Field Mapping Document Headers Up in Table View](./images/counterpoint-Emarsys-field-mapping-document-headers-up-table-view.png)
+![Emarsys Field Mapping Document Headers Up in Table View](./images/counterpoint-emarsys-field-mapping-document-headers-up-table-view.png)
 
 ---
 
-## SECTION 6: Emarsys Field Mapping – Document Lines Up
+## SECTION 5: Emarsys Field Mapping Document Lines Up
 
-The **Emarsys Field Mapping – Document Lines Up** screen provides a user interface for managing which document line fields are sent from Counterpoint up to Emarsys.
+The **Emarsys Field Mapping Document Lines Up** screen provides a user interface for managing which document line fields are sent from Counterpoint up to Emarsys.
 
 This table defines how document line data in Counterpoint maps to Emarsys event fields. The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
 Note: This is best viewed in _table view_.
 
-![Emarsys Field Mapping Document Lines Up in Table View](./images/counterpoint-Emarsys-field-mapping-document-lines-up-table-view.png)
+![Emarsys Field Mapping Document Lines Up in Table View](./images/counterpoint-emarsys-field-mapping-document-lines-up-table-view.png)
 
 ---
 
-## SECTION 7: Emarsys Field Mapping – Document Payments Up
+## SECTION 6: Emarsys Field Mapping Document Payments Up
 
-The **Emarsys Field Mapping – Document Payments Up** screen provides a user interface for managing which document payment fields are sent from Counterpoint up to Emarsys.
+The **Emarsys Field Mapping Document Payments Up** screen provides a user interface for managing which document payment fields are sent from Counterpoint up to Emarsys.
 
 This table defines how document line payment in Counterpoint maps to Emarsys event fields. The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
 Note: This is best viewed in _table view_.
 
-![Emarsys Field Mapping Document Payments Up in Table View](./images/counterpoint-Emarsys-field-mapping-document-payments-up-table-view.png)
-
+![Emarsys Field Mapping Document Payments Up in Table View](./images/counterpoint-emarsys-field-mapping-document-payments-up-table-view.png)
 
 ---
 
-## SECTION 8: Queued to Be Sent to Emarsys
+## SECTION 7: Queued to Be Sent to Emarsys
 
 When sending transactional (document) data to Emarsys, each ticket is first placed into a queue in Counterpoint. Tickets are then synced from this queue to Emarsys during connector runs.
 
-**Note:** Tickets are one type of document within Counterpoint. Currently this is the only document type pushed to Emarsys. (For example, orders and layaways are not sent to Emarsys.)
+**Note:** Tickets are one type of document within Counterpoint. Currently this is the only document type pushed to Emarsys. (For example, orders and layaways are not sent to Emarsys.) Additionally, tickets from Canadian stores are excluded from synchronization. 
 
-![Queued to be Sent to Emarsys](./images/counterpoint-Emarsys-queued-to-be-sent-to-Emarsys.png)
+![Queued to be Sent to Emarsys](./images/counterpoint-emarsys-queued-to-be-sent-to-emarsys.png)
 
 ### Queue Status Values
 
@@ -210,14 +242,14 @@ Each document in the queue includes a status value indicating its current state 
 
 ---
 
-## SECTION 9: Emarsys Customer Status View
+## SECTION 8: Emarsys Customer Status View
 
 Each Emarsys customer record includes a **sync status** that indicates its current state in the connector process. In some cases, it is helpful to review how many customer records fall into a particular status category.
 
-For example, you may want to identify that **43 customers have an invalid email address (status 5)** so those records can be reviewed and corrected.
+For example, you may want to identify that **four customers have encountered an error (status 9)** so those records can be reviewed and corrected.
 
 The **Emarsys Customer Status View** displays a summary table showing:
-- Each sync status code (0, 1, 2, 5, 6, 9)
+- Each sync status code (0, 1, 2, 5, 9)
 - The total number of customer records currently associated with that status
 
 **Notes:**
@@ -228,6 +260,33 @@ The **Emarsys Customer Status View** displays a summary table showing:
 ![Emarsys Customer Status View](./images/Emarsys-customer-status-view.png)
 
 For details on the meaning of each customer sync status value, refer back to **SECTION 1: Emarsys Customer Records**.
+
+---
+
+## SECTION 9: Run Emarsys Connector Button
+
+The **Run Emarsys Connector** menu option allows authorized users to manually trigger the Emarsys Connector when needed. Manual execution is typically used for testing or troubleshooting and is not required during normal operation.
+
+### How Manual Execution Works
+
+When the **Run Emarsys Connector** menu option is selected:
+
+- A **Manual Run Connector** action flag is set in the Emarsys configuration.
+- The flag functions as a **one-time execution request** and remains enabled until it is processed by the connector.
+- Execution is handled in the background on the server (not on the workstation) to prevent overlapping executions.
+
+### Background Processing and Scheduling
+
+A background process periodically checks for the **Manual Run Connector** action flag based on a configurable **CRON schedule** stored in the Emarsys configuration.
+
+- The **Manual Run Connector Execution Time** schedule can be configured from the **AIQ Configuration** screen.
+- When the action flag is detected:
+  - If the Emarsys connector is **not currently running**, it will execute for **all configured Emarsys accounts**, typically within one minute.
+  - If the connector **is already running**, the system waits for the current execution to complete, then automatically restarts the connector for all configured Emarsys accounts.
+
+In both scenarios, the action flag is **automatically cleared** when execution begins.
+
+**Important:** Manual execution is intended primarily for **programmer-led testing or troubleshooting**, often when the connector has been **temporarily disabled**. It is not designed for routine operational use, as the connector runs automatically according to its configured schedule.
 
 ---
 
@@ -266,45 +325,18 @@ For details on how customer profile changes are evaluated and synchronized betwe
 
 ---
 
-## SECTION 12: Customer Profile Sync Logic and Workflow
-
-This section describes the logical order and decision-making process used by the connector after a sync cycle begins.
-
-The Emarsys Connector processes customer profile updates in a defined sequence to ensure that the most recent and authoritative data is preserved between Counterpoint and Emarsys.
-
-### Step 1: Sync Changes from Emarsys Down to Counterpoint
-
-The connector first retrieves profile changes made in Emarsys and evaluates whether those changes should be applied to Counterpoint.
-
-- The connector compares the **date and time** of the most recent profile change in Emarsys to the **date and time** of the most recent update in Counterpoint.
-- The system uses the values from the source with the **most recent timestamp**.
-
-Behavior depends on configuration settings:
-
-- If **Insert/Update Customers** is **enabled**, all configured fields are synced down from Emarsys to Counterpoint.
-- If **Insert/Update Customers** is **disabled**, only **subscription status changes** are synced down.
-
-### Step 2: Sync Changes from Counterpoint Up to Emarsys
-
-After processing inbound changes, the connector identifies customer records in Counterpoint that have been **created or modified** since the previous sync.
-
-These updates are then pushed up to Emarsys, ensuring that Emarsys profiles reflect the most current customer information stored in Counterpoint.
-
----
-
-## SECTION 13: Managing Customer Email and Phone Updates
+## SECTION 12: Managing Customer Email and Phone Updates
 
 When a customer is synced to Emarsys, the connector stores the associated **Emarsys Profile ID** on the customer record in Counterpoint. This Profile ID becomes the permanent link between the Counterpoint customer and the Emarsys profile and is used for all future updates.  
 
 Using the Profile ID ensures that customer history, engagement data, events, and flow activity are preserved in Emarsys even when identifying information changes.
 
-### Updating Email Address and Phone Number
+### Updating Email Address
 
-If **Email Address 1** or the configured phone number (**Mobile Phone 1** or **Phone 1**) is updated in Counterpoint for a customer who already has a Emarsys profile:
+If **Email Address 1** is updated in Counterpoint for a customer who already has a Emarsys profile:
 
-- The connector updates the email address or phone number on the **existing Emarsys Profile ID**.
+- The connector updates the email address on the **existing Emarsys Profile ID**.
 - A new Emarsys profile is **not** created.
-- The customer retains their full Emarsys history, including events, metrics, and flow participation.
 
 This behavior ensures continuity in Emarsys while allowing customer contact information to be updated over time.
 
