@@ -279,7 +279,7 @@ When the **Run Emarsys Connector** menu option is selected:
 
 A background process periodically checks for the **Manual Run Connector** action flag based on a configurable **CRON schedule** stored in the Emarsys configuration.
 
-- The **Manual Run Connector Execution Time** schedule can be configured from the **AIQ Configuration** screen.
+- The **Manual Run Connector Execution Time** schedule can be configured from the **Emarsys Configuration** screen.
 - When the action flag is detected:
   - If the Emarsys connector is **not currently running**, it will execute for **all configured Emarsys accounts**, typically within one minute.
   - If the connector **is already running**, the system waits for the current execution to complete, then automatically restarts the connector for all configured Emarsys accounts.
