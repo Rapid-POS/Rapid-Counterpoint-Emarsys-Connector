@@ -45,11 +45,12 @@ If you would like the SAP Emarsys connector but your system does not meet these 
 
 In order for a Counterpoint customer to sync to Emarsys, an associated **Emarsys Customer Record** must exist in Counterpoint.
 
-Depending on configuration settings (see **SECTION 2: Emarsys Configuration**), these records are typically created automatically for customers who have a populated **Email Address 1** in Counterpoint. If automatic profile creation is disabled, Emarsys Customer Records must be created manually.
+Depending on configuration settings (see **SECTION 2: Emarsys Configuration**), these records are typically created automatically for customers who have a populated **Email Address 1** in Counterpoint. 
+- Note: If automatic profile creation is disabled, Emarsys Customer Records must be created manually for each customer.
 
 The Emarsys Customer Record serves as the connector’s control record and contains:
 
-- The email address (sourced from **Email Address 1** in Counterpoint)
+- The email address (sourced from **Email Address 1** on the Counterpoint customer record)
 - The Emarsys **Contact ID** (returned from Emarsys after a successful profile sync)
 - The current sync status
 
@@ -65,7 +66,7 @@ All Emarsys customer records can also be accessed from:
 
 This view allows records to be displayed in **table view**, where filters can be applied to review customers based on their current sync status.
 
-![Emarsys Customers in Table View](./images/counterpoint-emarsys-customers-table-view.png)
+![Emarsys Customers in Table View](./images/counterpoint-emarsys-customer-records-table-view.png)
 
 ### Emarsys Sync Status Codes
 
