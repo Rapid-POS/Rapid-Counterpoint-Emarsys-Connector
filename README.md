@@ -126,11 +126,11 @@ Controls whether or not Emarsys customer records are automatically created from 
   A Emarsys customer record is automatically created when a customer is added to Counterpoint with **Email Address 1**.
   - Customers pushed up to Emarsys are sent as "opt-in". 
 
-- **NO**  
+- **No**  
   Emarsys customer records must be created manually.
 
 ### Filter Customers Up
-If this filter is populated, then only the customers that meet the requirements of the defind filter will be pushed up to Emarsys.
+If this filter is populated, then only the customers that meet the requirements of the defined filter will be pushed up to Emarsys.
 
 ### Import New Contact?
 PLACEHOLDER FOR FUTURE DEVELOPMENT. Currently the connector **cannot** create (insert) new Counterpoint customer records. It also cannot update existing customer records in Counterpoint.
