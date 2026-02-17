@@ -1,5 +1,5 @@
-# Rapid POS Emarsys Connector - Version 1.1 
-Updated 2/13/2026
+# Rapid POS Emarsys Connector - Version 2.1 
+Updated 2/17/2026
 
 ---
 
@@ -53,6 +53,8 @@ The Emarsys Customer Record serves as the connector’s control record and conta
 - The email address (sourced from **Email Address 1** on the Counterpoint customer record)
 - The Emarsys **Contact ID** (returned from Emarsys after a successful profile sync)
 - The current sync status
+
+If the email address in **Email Address 1** does not meet valid email formatting requirements, the record will be flagged as invalid by Counterpoint, and it will not sync until corrected.
 
 After a customer profile is successfully created or matched in Emarsys, the Emarsys **Contact ID** is written back to Counterpoint.
 
@@ -305,24 +307,36 @@ Marking messages as read stops the pop-up notifications but does **not** delete 
 
 ## SECTION 11: Emarsys Connector Execution and Sync Timing
 
-The Emarsys Connector operates as a **Windows Service**, automatically syncing customer profiles and transactional documents between Counterpoint and Emarsys.
+The Emarsys Connector operates as a **Windows Service**, automatically syncing customer profiles between Counterpoint and Emarsys, and transactional documents between Counterpoint and a separate Events endpoint. 
 
-The connector runs continuously in the background and is responsible for keeping both systems aligned while respecting Emarsys API rate limits and configured sync rules.
+The connector runs in the background and processes different types of data on **separate schedules** to optimize performance, manage API usage, and ensure reliable synchronization.
 
-### Sync Intervals
+### Daily Event Execution Time
 
-The connector processes different types of data on separate schedules:
+The following data is synced once per day according to the configured Daily Event Execution Time (default 6:00 AM):
 
-- **Customer Profiles**  
-  New and updated customer profiles are synced every **15 minutes**.
+- Marks Emarsys connector messages as read
 
-- **Documents in the Queue**  
-  Transactional documents are synced every **1 minute**.  
-  This interval is configurable and may be adjusted to prevent Emarsys rate limiting.
+### Contact Execution Time
 
-If a document being synced contains a **new customer**, the customer profile is created in Emarsys **immediately as part of the document sync**. The connector does not wait for the next 15-minute customer profile sync cycle.
+The following data is synced once per day according to the configured Contact Event Execution Time (default every 1 minute):
 
-For details on how customer profile changes are evaluated and synchronized between Emarsys and Counterpoint, refer to **SECTION 13: Customer Profile Sync Logic and Workflow**.
+- Syncs customer profile updates between Counterpoint and Emarsys.
+- Syncs transactional documents (tickets) in the queue.
+
+### Rollback Stat Execution Time
+
+Runs periodically to ensure failed or interrupted sync attempts are retried automatically (default every 15 minutes):
+
+- Identifies customers or queue items that did not successfully sync.
+- Re-attempts synchronization for records still pending by checking for existing process IDs. 
+
+### Manual Run Connector Execution Time
+
+Supports the **Run Emarsys Connector** manual execution option (default every 1 minute):
+
+- When triggered manually, the connector bypasses normal schedule timing and executes contact and queue synchronization services within a minute.
+- Intended for testing or troubleshooting purposes.
 
 ---
 
