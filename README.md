@@ -177,7 +177,7 @@ Currently the connector **cannot** create (insert) new Counterpoint customer rec
 - _When developed_, this field will control whether Emarsys contacts can create new Counterpoint customer records.
   - If set to yes/checked, Emarsys contacts that do not match an existing Counterpoint customer will be inserted into Counterpoint.
   - If set to no/unchecked, new Counterpoint customer records will not be created by the connector.
-- If Import New Contact is ever utilized, then _Emarsys Field Mapping Customers Down_ should also be implemented.
+- If _Import New Contact_ is ever utilized, then _Emarsys Field Mapping Customers Down_ should also be implemented.
 
 ---
 
