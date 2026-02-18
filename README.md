@@ -172,7 +172,7 @@ If this filter is populated, then only the customers that meet the requirements 
 ### Other Configuration Options
 Additional configuration fields exist for internal use by Rapid programmers. These options are used to optimize performance or assist with troubleshooting and should not be modified by end users.
 
-### PLACEHOLDER FOR FUTURE DEVELOPMENT: Import New Contact (and Emarsys Field Mapping Customers Down)
+### _PLACEHOLDER FOR FUTURE DEVELOPMENT:_ Import New Contact and Emarsys Field Mapping Customers Down
 Currently the connector **cannot** create (insert) new Counterpoint customer records. It also **cannot** update existing customer records or Emarsys customer records in Counterpoint.
 - _When developed_, this field will control whether Emarsys contacts can create new Counterpoint customer records.
   - If set to yes/checked, Emarsys contacts that do not match an existing Counterpoint customer will be inserted into Counterpoint.
