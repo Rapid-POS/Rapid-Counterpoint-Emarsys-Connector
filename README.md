@@ -89,7 +89,9 @@ During this initial sync:
 
 - If the email address does **not** already exist in Emarsys:
   - A new contact is created in Emarsys.
-  - The opt-in status is set to `1` (TRUE) using a background action flag.
+  - The opt-in status is set to `**Y**`, meaning **Yes**, using a background action flag.
+    - This sets **Emarsys Field 31** to `**1**`, meaning `**TRUE**`.
+    - The background action flag is then cleared after the successful sync.
   - The Emarsys **Contact ID** is returned and stored in Counterpoint.
 
 - If the email address **already exists** in Emarsys:
@@ -200,11 +202,8 @@ Calculated fields are not included by default. Any request to add calculated fie
 The following customer fields are included in a standard Emarsys connector deployment:
 
 1. Email Address 1 (Emarsys Field 3)
-2. First Name (Emarsys Field 1 - is this actually part of the mapping?)
-3. Last Name (Emarsys Field 2 - is this actually part of the mapping?)
-4. Store ID (Emarsys Field 13887, set to the Counterpoint store ID only when a new contact is created in Emarsys)
-5. Opt-in (Emarsys Field 31, calculated field set to `1`, meaning yes, only when a new contact is created in Emarsys)
-6. Source (Emarsys Field 8874, calculated field set to `Rapid`, only when a new contact is created in Emarsys)
+2. Store ID (Emarsys Field 13887, set to the Counterpoint store ID only when the connector creates a new Emarsys Contact)
+3. Source (Emarsys Field 8874, calculated field set to `Rapid` only when the connector creates a new Emarsys Contact)
 
 Additional fields can be mapped by request.
 
