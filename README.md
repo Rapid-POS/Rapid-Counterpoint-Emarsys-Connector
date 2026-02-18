@@ -45,18 +45,19 @@ If you would like the SAP Emarsys connector but your system does not meet these 
 
 In order for a Counterpoint customer to sync to Emarsys, an associated **Emarsys Customer Record** must exist in Counterpoint.
 
-Depending on configuration settings (see **SECTION 2: Emarsys Configuration**), these records are typically created automatically for customers who have a populated **Email Address 1** in Counterpoint. 
-- Note: If automatic profile creation is disabled, Emarsys Customer Records must be created manually for each customer.
+Depending on configuration settings (see **SECTION 2: Emarsys Configuration**), these records are usually created automatically for customers who have a populated **Email Address 1** in Counterpoint. 
+- If automatic profile creation is disabled, Emarsys Customer Records must be created manually for each customer.
 
-The Emarsys Customer Record serves as the connector’s control record and contains:
+The Emarsys Customer Record contains:
 
 - The email address (sourced from **Email Address 1** on the Counterpoint customer record)
-- The Emarsys **Contact ID** (returned from Emarsys after a successful profile sync)
+- The Emarsys **Contact ID** (returned from Emarsys after the initial successful sync)
+- The last sync date/time for that Emarsys customer record
 - The current sync status
 
 If the email address in **Email Address 1** does not meet valid email formatting requirements, the record will be flagged as invalid by Counterpoint, and it will not sync until corrected.
 
-After a customer profile is successfully created or matched in Emarsys, the Emarsys **Contact ID** is written back to Counterpoint.
+When a customer profile is successfully created or matched in Emarsys, the Emarsys **Contact ID** is immediately written back to Counterpoint.
 
 ![Emarsys Customer Record](./images/counterpoint-emarsys-customer-record.png)
 
@@ -78,7 +79,25 @@ Each Emarsys customer record includes a sync status value indicating its current
 - **1** – Recently created or updated; will sync on the next connector run  
 - **2** – Profile is currently in the active sync queue  
 - **5** – Invalid email address  
-- **9** – Sync error; requires remediation before it can be re-synced  
+- **9** – Sync error; requires remediation before it can be re-synced
+
+### Opt-In Status and Initial Sync Behavior
+
+Each Emarsys Customer Record is synced to Emarsys **once**, at the time the profile is first created or matched. The connector does not push ongoing profile updates after this initial synchronization.
+
+During this initial sync:
+
+- If the email address does **not** already exist in Emarsys:
+  - A new contact is created in Emarsys.
+  - The opt-in status is set to `1` (TRUE) using a background action flag.
+  - The Emarsys **Contact ID** is returned and stored in Counterpoint.
+
+- If the email address **already exists** in Emarsys:
+  - The existing Emarsys contact is matched.
+  - The Emarsys **Contact ID** is stored in Counterpoint.
+  - The opt-in status in Emarsys is **not modified**.
+
+This design ensures that new contacts are opted in upon creation while preventing unintended changes to existing subscription statuses in Emarsys.
 
 ---
 
@@ -134,12 +153,6 @@ Controls whether or not Emarsys customer records are automatically created from 
 ### Filter Customers Up
 If this filter is populated, then only the customers that meet the requirements of the defined filter will be pushed up to Emarsys.
 
-### Import New Contact?
-PLACEHOLDER FOR FUTURE DEVELOPMENT. Currently the connector **cannot** create (insert) new Counterpoint customer records. It also cannot update existing customer records in Counterpoint.
-- _When developed_, this field will control whether Emarsys contacts can create new Counterpoint customer records.
-  - If set to yes/checked, Emarsys contacts that do not match an existing Counterpoint customer will be inserted into Counterpoint.
-  - If set to no/unchecked, new Counterpoint customer records will not be created by the connector.
-
 ### Max Customers to Sync
 - Used to optimize connector performance.
 - Defines the maximum number of customers that can be synced in a single connector run.
@@ -158,6 +171,13 @@ PLACEHOLDER FOR FUTURE DEVELOPMENT. Currently the connector **cannot** create (i
 
 ### Other Configuration Options
 Additional configuration fields exist for internal use by Rapid programmers. These options are used to optimize performance or assist with troubleshooting and should not be modified by end users.
+
+### PLACEHOLDER FOR FUTURE DEVELOPMENT: Import New Contact (and Emarsys Field Mapping Customers Down)
+Currently the connector **cannot** create (insert) new Counterpoint customer records. It also **cannot** update existing customer records or Emarsys customer records in Counterpoint.
+- _When developed_, this field will control whether Emarsys contacts can create new Counterpoint customer records.
+  - If set to yes/checked, Emarsys contacts that do not match an existing Counterpoint customer will be inserted into Counterpoint.
+  - If set to no/unchecked, new Counterpoint customer records will not be created by the connector.
+- If Import New Contact is ever utilized, then _Emarsys Field Mapping Customers Down_ should also be implemented.
 
 ---
 
@@ -180,11 +200,11 @@ Calculated fields are not included by default. Any request to add calculated fie
 The following customer fields are included in a standard Emarsys connector deployment:
 
 1. Email Address 1 (Emarsys Field 3)
-4. First Name (Emarsys Field 1)
-5. Last Name (Emarsys Field 2)
-6. Opt-in (Emarsys Field 31, default to `1`, meaning yes)
-7. Source (Emarsys Field 8874, defaults to `Rapid`)
-8. Store ID (Emarsys Field 13887)
+2. First Name (Emarsys Field 1 - is this actually part of the mapping?)
+3. Last Name (Emarsys Field 2 - is this actually part of the mapping?)
+4. Store ID (Emarsys Field 13887, set to the Counterpoint store ID only when a new contact is created in Emarsys)
+5. Opt-in (Emarsys Field 31, calculated field set to `1`, meaning yes, only when a new contact is created in Emarsys)
+6. Source (Emarsys Field 8874, calculated field set to `Rapid`, only when a new contact is created in Emarsys)
 
 Additional fields can be mapped by request.
 
@@ -329,7 +349,7 @@ The following data is synced once per day according to the configured Contact Ev
 Runs periodically to ensure failed or interrupted sync attempts are retried automatically (default every 15 minutes):
 
 - Identifies customers or queue items that did not successfully sync.
-- Re-attempts synchronization for records still pending by checking for existing process IDs. 
+- Re-attempts synchronization for records still pending by checking for process IDs that do not match the active process ID.
 
 ### Manual Run Connector Execution Time
 
