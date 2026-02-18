@@ -89,8 +89,8 @@ During this initial sync:
 
 - If the email address does **not** already exist in Emarsys:
   - A new contact is created in Emarsys.
-  - The opt-in status is set to `**Y**`, meaning **Yes**, using a background action flag.
-    - This sets **Emarsys Field 31** to `**1**`, meaning `**TRUE**`.
+  - The opt-in status is set to **`Y`**, meaning **Yes**, using a background action flag.
+    - This sets **Emarsys Field 31** to **`1`**, meaning **`TRUE`**.
     - The background action flag is then cleared after the successful sync.
   - The Emarsys **Contact ID** is returned and stored in Counterpoint.
 
