@@ -51,8 +51,8 @@ Depending on configuration settings (see **SECTION 2: Emarsys Configuration**), 
 The Emarsys Customer Record contains:
 
 - The email address (sourced from **Email Address 1** on the Counterpoint customer record)
-- The Emarsys **Contact ID** (returned from Emarsys after the initial successful sync)
-- The Emarsys **Opt-In Status** (returned from Emarsys after the initial sync as read-only field)
+- The **Emarsys Contact ID** (returned from Emarsys after the initial successful sync)
+- The **Current Emarsys Opt-In Status** (returned from Emarsys after the initial sync as read-only field)
 - The last sync date/time for that Emarsys customer record
 - The current sync status
 
