@@ -234,6 +234,7 @@ Any request to add fields must be reviewed and quoted separately by Rapid.
 The following fields are included in a standard Emarsys connector deployment:
 
 1. Email Address 1 (Emarsys Field 3)
+   - This is required for customer down matching because it maps the Email field to the Merge Field 3 for the Emarsys connector.
 2. Opt-In Status (Emarsys Field 31, _see details in SECTION 3: Emarsys Field Mapping Customers Up, Opt-In Status and Initial Sync Behavior_)
 
 Additional fields can be mapped by request.
