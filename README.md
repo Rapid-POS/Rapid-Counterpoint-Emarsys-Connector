@@ -219,7 +219,7 @@ This design ensures that new contacts are opted in upon creation while preventin
 
 The **Emarsys Field Mapping Customers Down** screen provides a user interface for managing which customer fields are imported from Emarsys down into Counterpoint.
 
-Currently the connector **cannot** create (insert) new Counterpoint customer records. This functionality is for updating values in Counterpoint (for reference) as part of the one-time contact sync. 
+Currently the connector **cannot** create (insert) new Counterpoint customer records. Right now, the **Customers Down** functionality is for updating values in Counterpoint (for reference) as part of the **one-time contact sync**. It cannot update customers on an on-going basis because Emarsys does not offer a _contact last updated date/time_ value. To update records on an on-going basis, we would need this "last modified" value to determine which record (Counterpoint or Emarsys) is the most accurate, and which one needs to be updated. This is a significant limitation and would need to be addressed if regular updates from Emarsys into Counterpoint is ever desired. 
 
 The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
