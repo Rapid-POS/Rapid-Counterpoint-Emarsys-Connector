@@ -107,12 +107,11 @@ For clients who use **multiple Emarsys accounts**, a separate configuration reco
 
 ### Credentials
 Stores the authentication values required for the Emarsys connector.
-
 - **Contact Sync Credentials** – API key and username used for customer profile (contact) synchronization.
 - **Event Sync API Key** – API key used for transactional event (document/ticket) synchronization.
 
 ### Endpoints
-- Defines the service URLs used by the connector. Contacts and events are processed by separate Emarsys services and therefore require distinct endpoints.
+Defines the service URLs used by the connector. Contacts and events are processed by separate Emarsys services and therefore require distinct endpoints.
   - **Contact Endpoint** – Used for customer profile (contact) synchronization.
   - **Event Endpoint** – Used for transactional event (document/ticket) synchronization.
 
@@ -130,13 +129,8 @@ Stores the authentication values required for the Emarsys connector.
 
 ### Auto Create Emarsys Profile
 Controls whether or not Emarsys customer records are automatically created from Counterpoint.
-
-- **Yes/Checked**  
-  A Emarsys customer record is automatically created when a customer is added to Counterpoint with **Email Address 1**.
-  - Customers pushed up to Emarsys are sent as "opt-in". 
-
-- **No**  
-  Emarsys customer records must be created manually.
+- **Yes/Checked** - An Emarsys customer record is automatically created when a customer is added to Counterpoint with **Email Address 1**. Customers pushed up to Emarsys are sent as "opt-in". 
+- **No** - Emarsys customer records must be created manually.
 
 ### Filter Customers Up
 - If this filter is populated, then only the customers that meet the requirements of the defined filter will be pushed up to Emarsys.
@@ -146,9 +140,9 @@ Controls whether or not Emarsys customer records are automatically created from 
 - Defines the maximum number of customers that can be synced in a single connector run.
 
 ### Send Documents Up
-- If set to yes/checked, documents (tickets) will be sent to the defined endpoint at ticket completion.
+- **Yes/Checked** - Documents (tickets) will be sent to the defined endpoint at ticket completion.
   - Note: The stored procedure that controls this functionality will automatically exclude sending tickets from stores with a Canadian address.
-- If set to no/unchecked, no documents will be sent.
+- **No/Unchecked** - No documents will be sent.
 
 ### External Event ID
 - Required by the events endpoint. 
@@ -162,10 +156,8 @@ Additional configuration fields exist for internal use by Rapid programmers. The
 
 ### _PLACEHOLDER FOR FUTURE DEVELOPMENT:_ Import New Contact
 Currently, the connector **cannot create (insert)** new Counterpoint customer records from Emarsys. _When developed_, this setting will control whether Emarsys contacts are allowed to create new customer records in Counterpoint.
-
 - **Yes/Checked** - Emarsys contacts that do not match an existing Counterpoint customer would be inserted as new customer records.
 - **No/Unchecked** - New Counterpoint customer records would not be created by the connector.
-
 **Important:** Development of this feature would require Emarsys to expose a reliable **“Last Updated” date/time field** for contacts. Without this, the connector cannot determine whether the Counterpoint record or the Emarsys record contains the most current data. This limitation must be addressed before inbound customer creation from Emarsys can be safely implemented.
 
 ---
@@ -204,14 +196,14 @@ Each Emarsys Customer Record is synced to Emarsys **once**. During this initial 
 
 - If the email address does **not** already exist in Emarsys:
   - A new contact is created in Emarsys.
-  - The opt-in status (**Emarsys Field 31**) is set to **`1`**, meaning **`TRUE`**.
+  - The opt-in status (**Emarsys Field 31**) is set to **`1`**, meaning **`OPTED IN`**.
     - Emarsys evaluates this request and finalizes the opt-in status, which is then returned and stored in Counterpoint. 
   - The Emarsys **Contact ID** is returned and stored in Counterpoint.
 
 - If the email address **already exists** in Emarsys:
   - The existing Emarsys contact is matched.
-  - The Emarsys **Contact ID** is returned and stored in Counterpoint.
   - The opt-in status in Emarsys is **not modified** by the connector. Instead, the existing Emarsys opt-in status of the contact is simply returned and stored in Counterpoint. 
+  - The Emarsys **Contact ID** is returned and stored in Counterpoint.
 
 This design ensures that new contacts are opted in upon creation while preventing unintended changes to existing subscription (opt-in/opt-out) statuses in Emarsys.
 
