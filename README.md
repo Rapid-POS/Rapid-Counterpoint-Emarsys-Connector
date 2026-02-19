@@ -59,7 +59,7 @@ The Emarsys Customer Record contains:
 
 If the email address in **Email Address 1** does not meet valid email formatting requirements, the record will be flagged as invalid by Counterpoint, and it will not sync until corrected.
 
-When a customer profile is successfully created or matched in Emarsys, the Emarsys **Contact ID** is immediately written back to Counterpoint.
+When a customer profile is successfully created or matched in Emarsys, the Emarsys **Contact ID** and the Emarsys **Opt-In Status** are immediately written back to Counterpoint.
 
 ![Emarsys Customer Record](./images/counterpoint-emarsys-customer-record.png)
 
@@ -112,10 +112,9 @@ Stores the authentication values required for the Emarsys connector.
 - **Event Sync API Key** – API key used for transactional event (document/ticket) synchronization.
 
 ### Endpoints
-Defines the service URLs used by the connector. Contacts and events are processed by separate Emarsys services and therefore require distinct endpoints.
-
-- **Contact Endpoint** – Used for customer profile (contact) synchronization.
-- **Event Endpoint** – Used for transactional event (document/ticket) synchronization.
+- Defines the service URLs used by the connector. Contacts and events are processed by separate Emarsys services and therefore require distinct endpoints.
+  - **Contact Endpoint** – Used for customer profile (contact) synchronization.
+  - **Event Endpoint** – Used for transactional event (document/ticket) synchronization.
 
 ### Connector Version
 - Displays the currently installed version of the Emarsys Connector.  
@@ -140,7 +139,7 @@ Controls whether or not Emarsys customer records are automatically created from 
   Emarsys customer records must be created manually.
 
 ### Filter Customers Up
-If this filter is populated, then only the customers that meet the requirements of the defined filter will be pushed up to Emarsys.
+- If this filter is populated, then only the customers that meet the requirements of the defined filter will be pushed up to Emarsys.
 
 ### Max Customers to Sync
 - Used to optimize connector performance.
@@ -162,11 +161,21 @@ If this filter is populated, then only the customers that meet the requirements 
 Additional configuration fields exist for internal use by Rapid programmers. These options are used to optimize performance or assist with troubleshooting and should not be modified by end users.
 
 ### _PLACEHOLDER FOR FUTURE DEVELOPMENT:_ Import New Contact
-Currently the connector **cannot** create (insert) new Counterpoint customer records. 
-- _When developed_, this field will control whether Emarsys contacts can create new Counterpoint customer records.
-  - If set to yes/checked, Emarsys contacts that do not match an existing Counterpoint customer will be inserted into Counterpoint.
-  - If set to no/unchecked, new Counterpoint customer records will not be created by the connector.
-- Note: In order to develop this, Emarsys would need to expose a _contact last updated date/time_ field so that the connector could determine which record (Counterpoint or Emarsys) is the most accurate. This is a significant limitation and would need to be addressed if importing from Emarsys into Counterpoint is desired.
+
+Currently, the connector **cannot create (insert)** new Counterpoint customer records from Emarsys.
+
+_When developed_, this setting will control whether Emarsys contacts are allowed to create new customer records in Counterpoint.
+
+- **Yes/Checked**  
+  Emarsys contacts that do not match an existing Counterpoint customer would be inserted as new customer records.
+
+- **No/Unchecked**  
+  New Counterpoint customer records would not be created by the connector.
+
+**Important:**  
+Development of this feature would require Emarsys to expose a reliable **“Last Updated” date/time field** for contacts. Without this, the connector cannot determine whether the Counterpoint record or the Emarsys record contains the most current data.
+
+This limitation must be addressed before inbound customer creation from Emarsys can be safely implemented.
 
 ---
 
@@ -209,9 +218,9 @@ Each Emarsys Customer Record is synced to Emarsys **once**. During this initial 
 - If the email address **already exists** in Emarsys:
   - The existing Emarsys contact is matched.
   - The Emarsys **Contact ID** is returned and stored in Counterpoint.
-  - The opt-in status in Emarsys is **not modified**. The existing opt-in status of the contact is returned and stored in Counterpoint. 
+  - The opt-in status in Emarsys is **not modified** by the connector. Instead, the existing Emarsys opt-in status of the contact is simply returned and stored in Counterpoint. 
 
-This design ensures that new contacts are opted in upon creation while preventing unintended changes to existing subscription statuses in Emarsys.
+This design ensures that new contacts are opted in upon creation while preventing unintended changes to existing subscription (opt-in/opt-out) statuses in Emarsys.
 
 ---
 
@@ -219,7 +228,10 @@ This design ensures that new contacts are opted in upon creation while preventin
 
 The **Emarsys Field Mapping Customers Down** screen provides a user interface for managing which customer fields are imported from Emarsys down into Counterpoint.
 
-Currently the connector **cannot** create (insert) new Counterpoint customer records. Right now, the **Customers Down** functionality is for updating values in Counterpoint (for reference) as part of the **one-time contact sync**. It cannot update customers on an on-going basis because Emarsys does not offer a _contact last updated date/time_ value. To update records on an on-going basis, we would need this "last modified" value to determine which record (Counterpoint or Emarsys) is the most accurate, and which one needs to be updated. This is a significant limitation and would need to be addressed if regular updates from Emarsys into Counterpoint is ever desired. 
+Currently the connector **cannot create (insert)** new Counterpoint customer records. 
+- The **Customers Down** functionality is currently limited to updating selected fields in Counterpoint during the **initial one-time contact synchronization**.
+- Ongoing customer updates from Emarsys into Counterpoint are not supported. Emarsys does not provide a reliable **contact last updated date/time** value that would allow the connector to determine whether the Emarsys record or the Counterpoint record contains the most current data. Without this comparison point, automated bidirectional updates cannot be performed safely.
+- This limitation would need to be addressed before regular inbound synchronization from Emarsys into Counterpoint could be implemented.
 
 The standard deployment includes a predefined set of fields that are automatically synced. Adjustments to this table should generally be performed by a programmer.
 
@@ -233,13 +245,16 @@ Any request to add fields must be reviewed and quoted separately by Rapid.
 
 The following fields are included in a standard Emarsys connector deployment:
 
-1. Email Address 1 (Emarsys Field 3)
-   - This is required for customer down matching because it maps the Email field to the Merge Field 3 for the Emarsys connector.
-2. Opt-In Status (Emarsys Field 31, _see details in SECTION 3: Emarsys Field Mapping Customers Up, Opt-In Status and Initial Sync Behavior_)
+1. **Email Address 1** (Emarsys Field 3)  
+   - Required for customer matching during the initial sync.
+   - Maps the Emarsys _Email_ field to the Emarsys Merge _Field 3_.
 
-Additional fields can be mapped by request.
+2. **Opt-In Status** (Emarsys Field 31)  
+   - See **Section 3: Emarsys Field Mapping Customers Up – Opt-In Status and Initial Sync Behavior** for additional details.
 
-Note: The **Emarsys Contact ID** is hard-coded to import into Counterpoint and is not listed on the field mapping for customers down.
+Additional fields may be mapped upon request.
+
+**Note:** The **Emarsys Contact ID** is hard-coded to import into Counterpoint and does not appear in the field mapping for customers down.
 
 ---
 
@@ -252,6 +267,22 @@ This table defines how document header data in Counterpoint maps to Emarsys even
 Note: This is best viewed in _table view_.
 
 ![Emarsys Field Mapping Document Headers Up in Table View](./images/counterpoint-emarsys-field-mapping-document-headers-up-table-view.png)
+
+### Receipt Delivery Method
+
+Some clients may have a Touchscreen customization that captures the selected **Receipt Delivery Method** (`USER_RCPT_DELIV_METH`) at the time of ticket completion.
+
+When this enhancement is installed, the value is stored in the `PS_%_EXT` tables and populated by the **Customer Prompts Touchscreen** application.
+
+Valid values include:
+
+- `P` – Print  
+- `N` – None  
+- `E` – Email  
+
+If mapped in the **Documents Up** configuration, this field can be included in the event payload sent to Emarsys. This allows the email marketing team to identify customers who selected **Email** as their receipt delivery method for that specific transaction.
+
+This value reflects the receipt preference selected at the time of the transaction and does not update retroactively.
 
 ---
 
