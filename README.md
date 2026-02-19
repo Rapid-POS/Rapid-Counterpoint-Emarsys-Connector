@@ -52,8 +52,8 @@ Depending on configuration settings (see **SECTION 2: Emarsys Configuration**), 
 The Emarsys Customer Record contains:
 
 - The email address (sourced from **Email Address 1** on the Counterpoint customer record)
-- The **Emarsys Contact ID** (returned from Emarsys after the initial sync as read-only field)
-- The **Current Emarsys Opt-In Status** (returned from Emarsys after the initial sync as read-only field)
+- The **Emarsys Contact ID** (returned from Emarsys after the initial sync as a read-only field)
+- The **Current Emarsys Opt-In Status** (returned from Emarsys after the initial sync as a read-only field)
 - The last sync date/time for that Emarsys customer record
 - The current sync status
 
@@ -234,7 +234,7 @@ The following fields are included in a standard Emarsys connector deployment:
 
 1. **Email Address 1** (Emarsys Field 3)  
    - Required for customer matching during the initial sync.
-   - Important - This maps the Emarsys _Email_ field to the Emarsys Merge _Field 3_. This field is critical to tying that information together.
+   - Important: This maps the Emarsys _Email_ field to the Emarsys Merge _Field 3_. This field is critical to tying that information together.
 
 2. **Opt-In Status** (Emarsys Field 31)  
    - See **Section 3: Emarsys Field Mapping Customers Up – Opt-In Status and Initial Sync Behavior** for additional details.
@@ -304,10 +304,10 @@ When sending transactional (document) data to Emarsys, each ticket is first plac
 **Notes:** 
 - Tickets are one type of document within Counterpoint. Currently this is the only **document type** pushed to Emarsys.
   - For example, orders and layaways are not sent to Emarsys.
-  - Currently this is hard-coded, but future implementation could possibly make this configurable.
+  - Currently, this is hard-coded, but future implementation could possibly make this configurable.
 
 - Tickets from **Canadian** stores are excluded from synchronization.
-  - Currently this is hard-coded, but future implementation could possibly make this configurable. 
+  - Currently, this is hard-coded, but future implementation could possibly make this configurable. 
 
 ![Queued to be Sent to Emarsys](./images/counterpoint-emarsys-queued-to-be-sent-to-emarsys.png)
 
