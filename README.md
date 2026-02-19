@@ -155,9 +155,10 @@ Controls whether or not Emarsys customer records are automatically created from 
 Additional configuration fields exist for internal use by Rapid programmers. These options are used to optimize performance or assist with troubleshooting and should not be modified by end users.
 
 ### _PLACEHOLDER FOR FUTURE DEVELOPMENT:_ Import New Contact
-Currently, the connector **cannot create (insert)** new Counterpoint customer records from Emarsys. _When developed_, this setting will control whether Emarsys contacts are allowed to create new customer records in Counterpoint.
+Currently, the connector **cannot create (insert)** new Counterpoint customer records from Emarsys. _If developed_, this setting will control whether Emarsys contacts are allowed to create new customer records in Counterpoint.
 - **Yes/Checked** - Emarsys contacts that do not match an existing Counterpoint customer would be inserted as new customer records.
 - **No/Unchecked** - New Counterpoint customer records would not be created by the connector.
+  
 **Important:** Development of this feature would require Emarsys to expose a reliable **“Last Updated” date/time field** for contacts. Without this, the connector cannot determine whether the Counterpoint record or the Emarsys record contains the most current data. This limitation must be addressed before inbound customer creation from Emarsys can be safely implemented.
 
 ---
@@ -202,7 +203,8 @@ Each Emarsys Customer Record is synced to Emarsys **once**. During this initial 
 
 - If the email address **already exists** in Emarsys:
   - The existing Emarsys contact is matched.
-  - The opt-in status in Emarsys is **not modified** by the connector. Instead, the existing Emarsys opt-in status of the contact is simply returned and stored in Counterpoint. 
+  - The opt-in status in Emarsys is **not modified** by the connector.
+    - Instead, the existing Emarsys opt-in status of the contact is simply returned and stored in Counterpoint. 
   - The Emarsys **Contact ID** is returned and stored in Counterpoint.
 
 This design ensures that new contacts are opted in upon creation while preventing unintended changes to existing subscription (opt-in/opt-out) statuses in Emarsys.
