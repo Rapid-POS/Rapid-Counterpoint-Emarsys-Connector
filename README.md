@@ -191,10 +191,10 @@ The following customer fields are included in a standard Emarsys connector deplo
 1. **Email Address 1** (Emarsys Field 3)
 2. **Opt-In Status** (Emarsys Field 31)
    - Set to "opted-in" only when the connector creates a new Emarsys Contact, _see details below_.
-3. **Store ID** (Emarsys Field 13887)
-   - Set to the Counterpoint store ID only when the connector creates a new Emarsys Contact.
-4. **Source** (Emarsys Field 8874)
+3. **Source** (Emarsys Field 8874)
    - Calculated field set to `Rapid` only when the connector creates a new Emarsys Contact.
+4. **Store ID** (Emarsys Field 13887)
+   - Set to the Counterpoint store ID only when the connector creates a new Emarsys Contact.
 
 Additional fields can be mapped by request.
 
@@ -204,8 +204,7 @@ Each Emarsys Customer Record is synced to Emarsys **once**. During this initial 
 
 - If the email address does **not** already exist in Emarsys:
   - A new contact is created in Emarsys.
-  - The opt-in status is set to **`Y`**, meaning **Yes**.
-    - This sets **Emarsys Field 31** to **`1`**, meaning **`TRUE`**.
+  - The opt-in status (**Emarsys Field 31**) is set to **`1`**, meaning **`TRUE`**.
     - Emarsys evaluates this request and finalizes the opt-in status, which is then returned and stored in Counterpoint. 
   - The Emarsys **Contact ID** is returned and stored in Counterpoint.
 
@@ -274,7 +273,7 @@ Valid values include:
 - `N` – None  
 - `E` – Email  
 
-If mapped in the **Documents Up** configuration, this field can be included in the event payload sent to Emarsys. This allows the email marketing team to identify customers who selected **Email** as their receipt delivery method for that specific transaction.
+If mapped, this field can be included in the event payload sent to Emarsys. This allows the client's email marketing team to identify customers who selected **Email** as their receipt delivery method for that specific transaction.
 
 This value reflects the receipt preference selected at the time of the transaction and does not update retroactively.
 
