@@ -1,5 +1,5 @@
 # Rapid POS Emarsys Connector - Version 2.1 
-Updated 2/18/2026
+Updated 6/9/2026
 
 ---
 
@@ -19,6 +19,9 @@ Prior to considering this connector, please reach out to SAP Emarsys for a produ
 - Minimum PowerShell version: **5.1**  
 
 If you would like the SAP Emarsys connector but your system does not meet these minimum requirements, please consult your Care Team Lead (vCIO) for an upgrade quote.
+
+> [!WARNING]
+> Your environment must meet our [CI/CD Connector Requirements](https://github.com/Rapid-POS/Miscellaneous-Documents/blob/main/CICD-Connector-Requirements.md) (server access, firewall rules, etc.) before any install or upgrade. Troubleshooting, manual installs, or follow-up work resulting from unmet requirements will be billed at standard T&M rates.
 
 ---
 
