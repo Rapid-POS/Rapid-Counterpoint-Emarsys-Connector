@@ -90,7 +90,8 @@ Each Emarsys customer record includes a sync status value indicating its current
 - **5** – Invalid email address  
 - **9** – Sync error; requires remediation before it can be re-synced
 
-### [↑ Back to Top](#table-of-contents)
+#### [↑ Back to Top](#table-of-contents)
+
 ---
 
 ## SECTION 2: Emarsys Configuration
@@ -164,6 +165,8 @@ Currently, the connector **cannot create (insert)** new Counterpoint customer re
   
 **Important:** Development of this feature would require Emarsys to expose a reliable **“Last Updated” date/time field** for contacts. Without this, the connector cannot determine whether the Counterpoint record or the Emarsys record contains the most current data. This limitation must be addressed before inbound customer creation from Emarsys can be safely implemented.
 
+#### [↑ Back to Top](#table-of-contents)
+
 ---
 
 ## SECTION 3: Emarsys Field Mapping Customers Up
@@ -212,6 +215,8 @@ Each Emarsys Customer Record is synced to Emarsys **once**. During this initial 
 
 This design ensures that new contacts are opted in upon creation while preventing unintended changes to existing subscription (opt-in/opt-out) statuses in Emarsys.
 
+#### [↑ Back to Top](#table-of-contents)
+
 ---
 
 ## SECTION 4: Emarsys Field Mapping Customers Down
@@ -246,6 +251,8 @@ Additional fields may be mapped upon request.
 
 **Note:** The **Emarsys Contact ID** is hard-coded to import into Counterpoint and does not appear in the field mapping for customers down.
 
+#### [↑ Back to Top](#table-of-contents)
+
 ---
 
 ## SECTION 5: Emarsys Field Mapping Document Headers Up
@@ -274,6 +281,8 @@ If mapped, this field can be included in the event payload sent to Emarsys. This
 
 This value reflects the receipt preference selected at the time of the transaction and does not update retroactively.
 
+#### [↑ Back to Top](#table-of-contents)
+
 ---
 
 ## SECTION 6: Emarsys Field Mapping Document Lines Up
@@ -297,6 +306,8 @@ This table defines how document line payment in Counterpoint maps to Emarsys eve
 Note: This is best viewed in _table view_.
 
 ![Emarsys Field Mapping Document Payments Up in Table View](./images/counterpoint-emarsys-field-mapping-document-payments-up-table-view.png)
+
+#### [↑ Back to Top](#table-of-contents)
 
 ---
 
@@ -323,6 +334,8 @@ Each document in the queue includes a status value indicating its current state 
 - **2** – Document is currently in the active sync queue  
 - **9** – Document encountered an error and requires remediation before it can be re-synced
 
+#### [↑ Back to Top](#table-of-contents)
+
 ---
 
 ## SECTION 9: Emarsys Customer Status View
@@ -343,6 +356,8 @@ The **Emarsys Customer Status View** displays a summary table showing:
 ![Emarsys Customer Status View](./images/counterpoint-emarsys-customer-status-view-table-view.png)
 
 For details on the meaning of each customer sync status value, refer back to **SECTION 1: Emarsys Customer Records**.
+
+#### [↑ Back to Top](#table-of-contents)
 
 ---
 
@@ -371,6 +386,8 @@ In both scenarios, the action flag is **automatically cleared** when execution b
 
 **Important:** Manual execution is intended primarily for **programmer-led testing or troubleshooting**, often when the connector has been **temporarily disabled**. It is not designed for routine operational use, as the connector runs automatically according to its configured schedule.
 
+#### [↑ Back to Top](#table-of-contents)
+
 ---
 
 ## SECTION 11: Mark All Emarsys Messages as Read
@@ -382,6 +399,8 @@ This is especially useful in scenarios such as:
 - High-volume alert conditions that have already been reviewed or acknowledged
 
 Marking messages as read stops the pop-up notifications but does **not** delete the messages. All connector messages remain accessible in Counterpoint and can be reviewed at any time.
+
+#### [↑ Back to Top](#table-of-contents)
 
 ---
 
@@ -418,6 +437,8 @@ Supports the **Run Emarsys Connector** manual execution option (default every 1 
 - When triggered manually, the connector bypasses normal schedule timing and executes contact and queue synchronization services within a minute.
 - Intended for testing or troubleshooting purposes.
 
+#### [↑ Back to Top](#table-of-contents)
+
 ---
 
 ## Conclusion
@@ -425,3 +446,5 @@ Supports the **Run Emarsys Connector** manual execution option (default every 1 
 The Rapid Emarsys Connector streamlines the exchange of customer profiles and transactional data between Counterpoint and Emarsys, enabling powerful email marketing.
 
 For assistance with configuration changes, custom field mapping, or troubleshooting, contact Rapid Support.  
+
+#### [↑ Back to Top](#table-of-contents)
