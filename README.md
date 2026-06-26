@@ -90,6 +90,7 @@ Each Emarsys customer record includes a sync status value indicating its current
 - **5** – Invalid email address  
 - **9** – Sync error; requires remediation before it can be re-synced
 
+### [↑ Back to Top](#table-of-contents)
 ---
 
 ## SECTION 2: Emarsys Configuration
