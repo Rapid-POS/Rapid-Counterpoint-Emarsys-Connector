@@ -1,5 +1,5 @@
 # Rapid POS Emarsys Connector - Version 2.1 
-Updated 6/9/2026
+Updated 6/25/2026
 
 ---
 
@@ -40,7 +40,6 @@ If you would like the SAP Emarsys connector but your system does not meet these 
 - [Section 10: Run Emarsys Connector Button](#section-10-run-emarsys-connector-button)
 - [Section 11: Mark All Emarsys Messages as Read](#section-11-mark-all-emarsys-messages-as-read)
 - [Section 12: Emarsys Connector Execution and Sync Timing](#section-12-emarsys-connector-execution-and-sync-timing)
-- [Section 13: Managing Customer Email and Phone Updates](#section-13-managing-customer-email-and-phone-updates)
 - [Conclusion](#conclusion)
 
 ---
@@ -417,58 +416,6 @@ Supports the **Run Emarsys Connector** manual execution option (default every 1 
 
 - When triggered manually, the connector bypasses normal schedule timing and executes contact and queue synchronization services within a minute.
 - Intended for testing or troubleshooting purposes.
-
----
-
-## SECTION 13: Managing Customer Email and Phone Updates
-
-When a customer is synced to Emarsys, the connector stores the associated **Emarsys Profile ID** on the customer record in Counterpoint. This Profile ID becomes the permanent link between the Counterpoint customer and the Emarsys profile and is used for all future updates.  
-
-Using the Profile ID ensures that customer history, engagement data, events, and flow activity are preserved in Emarsys even when identifying information changes.
-
-### Updating Email Address
-
-If **Email Address 1** is updated in Counterpoint for a customer who already has a Emarsys profile:
-
-- The connector updates the email address on the **existing Emarsys Profile ID**.
-- A new Emarsys profile is **not** created.
-
-This behavior ensures continuity in Emarsys while allowing customer contact information to be updated over time.
-
-### Handling Duplicate Customer Records
-
-The Emarsys Connector enforces strict rules to prevent **duplicate Emarsys profiles** and to maintain data integrity. Because Emarsys profiles are uniquely identified by email address (per Emarsys account), a single email address can only be associated with **one** Counterpoint customer record for that account.
-
-The following scenarios describe how the connector behaves.
-
-#### Scenario 1: Duplicate Email Addresses Already Exist in Counterpoint During Initial Setup
-
-If the connector is installed and **multiple Counterpoint customers already share the same Email Address 1**:
-
-- The connector creates or associates **one** Emarsys profile for that email address.
-- Only one Counterpoint customer record can be linked to that Emarsys profile.
-- Any additional Counterpoint customers using the same email address will **not** be able to create or associate their own Emarsys customer record for that email address.
-
-This behavior is expected and prevents duplicate Emarsys profiles from being created during initial deployment.
-
-#### Scenario 2: A Emarsys Customer Record Already Exists and the Same Email Is Assigned to Another Counterpoint Customer
-
-If a Emarsys customer record already exists in Counterpoint for a given email address, and a user attempts to assign that **same Email Address 1** to a different Counterpoint customer record (either by editing an existing customer or creating a new one):
-
-- Counterpoint blocks the action.
-- An error is returned to the user.
-- The connector does **not** allow a second Counterpoint customer to be linked to the same Emarsys profile.
-
-This prevents multiple Counterpoint customer records from sharing a single Emarsys profile.
-
-### Handling Merged Customers in Counterpoint
-
-When two customer records are merged in Counterpoint:
-
-- The Emarsys customer record associated with the **“To”** customer (the retained record) remains linked to the Emarsys profile.
-- If the **“From”** customer had an associated Emarsys customer record, that record becomes detached from any active customer.
-
-It is recommended to **manually delete** the detached Emarsys customer record after the merge. Otherwise, it will remain in Counterpoint with no functional association to an active Emarsys profile.
 
 ---
 
