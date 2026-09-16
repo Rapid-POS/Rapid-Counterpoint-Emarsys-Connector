@@ -1,5 +1,5 @@
 # Rapid POS Emarsys Connector - Version 2.1 
-Updated 6/25/2026
+Updated September 16th 2026
 
 ---
 
@@ -13,7 +13,7 @@ Prior to considering this connector, please reach out to SAP Emarsys for a produ
 
 ## Minimum System Requirements:
 - Minimum Counterpoint version: **8.5.6.2**  
-- Minimum SQL Server version: **2016**  
+- Minimum SQL Server version: **2017**  
 - Minimum Supported Operating System version: **Windows Server 2016** or **Windows 11 Pro** 
 - Minimum PowerShell version: **5.1**
 
